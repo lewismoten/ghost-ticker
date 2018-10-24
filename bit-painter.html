@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>Bit Painter</title>
+    <script>
+      var ROWS = 8;
+      var COLUMNS = 5;
+
+      window.onload = function() {
+        var canvas = document.getElementById("canvas");
+        for (var y = 0; y < ROWS; y++) {
+          var row = document.createElement("TR");
+          for (var x = 0; x < COLUMNS; x++) {
+            var cell = document.createElement("TD");
+            cell.id = "cell_" + x + "_" + y;
+            cell.onclick = cellClicked;
+            row.appendChild(cell);
+          }
+          canvas.appendChild(row);
+        }
+      }
+
+      function cellClicked() {
+        this.style.backgroundColor = isOn(this) ? "#ffffff" : "#000000";
+        calcCode();
+      }
+
+      function isOn(cell) {
+        var color = cell.style.backgroundColor;
+        return (color && color === "rgb(0, 0, 0)");
+      }
+
+      function calcCode() {
+        var binaryText = "";
+        var hexText = "";
+        for (var x = 0; x < COLUMNS; x++) {
+          binaryText += "B";
+          hexText += "0x";
+          var hexValue = 0;
+          for (var y = 0; y < ROWS; y++) {
+            var on = isOn(document.getElementById("cell_" + x + "_" + y));
+            binaryText += on ? "1" : "0";
+            hexValue += on ? (1 << y) : 0;
+          }
+          binaryText += ",\r\n";
+          if (hexValue < 16) {
+            hexText += "0";
+          }
+          hexText += hexValue.toString(16).toUpperCase() + ", ";
+        }
+
+        document.getElementById("binary").value = binaryText;
+        document.getElementById("hex").value = hexText;
+
+      }
+
+    </script>
+    <style>
+      #canvas {
+        border-collapse: collapse;
+      }
+      #canvas td {
+        width: 32px;
+        height: 32px;
+      }
+      textarea {
+        width: 256px;
+        height: 256px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <table id="canvas" border=1></table>
+    <p>
+      Binary:<br />
+      <textarea id="binary"></textarea>
+    </p>
+    <p>
+      byte:<br />
+      <textarea id="byte"></textarea>
+    </p>
+    <p>
+      hex:<br />
+      <textarea id="hex"></textarea>
+    </p>
+  </body>
+</html>
